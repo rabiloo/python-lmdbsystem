@@ -1,0 +1,81 @@
+#========================
+# Define pipeline stages
+#========================
+stages:
+  - lint
+  - test
+  - scan
+  - build
+
+image: python:3.10
+
+cache:
+  paths:
+    - .pip
+
+.before_script_build: &before_script_build
+  before_script:
+    - rm -rf build dist *.egg-info
+    - apt-get update && apt-get install -y twine
+
+#========================
+# Define jobs
+#========================
+lint-code:
+  stage: lint
+  needs: [ ]
+  before_script:
+    - python -m pip install --upgrade pip
+    - pip install black flake8 typing_extensions isort
+  script:
+    - flake8 . --count --max-complexity=10 --max-line-length=120 --statistics --ignore W503
+    - black . --check --target-version=py310 --line-length=120
+    - isort . --check-only --profile=black --lbt=1 -l=120
+
+unit-test:
+  stage: test
+  needs: [ ]
+  before_script:
+    - python -m pip install --upgrade pip
+    - pip install pytest lmdb opencv-python-headless Pillow numpy tqdm
+    - if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+    - if [ -f requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
+  script:
+    # install local module
+    - pip install .
+    # test with Pytest
+    - pytest
+  allow_failure: true
+
+sast:
+  stage: scan
+  needs: [ ]
+
+dependency_scanning:
+  stage: scan
+  needs: [ ]
+
+secret_detection:
+  stage: scan
+  needs: [ ]
+
+license_scanning:
+  stage: scan
+  needs: [ ]
+
+latest-image:
+  stage: build
+  <<: *before_script_build
+  script:
+    - python -m pip install --upgrade pip
+    - pip install build
+    - python -m build
+    - TWINE_PASSWORD=${CI_JOB_TOKEN} TWINE_USERNAME=gitlab-ci-token twine upload --verbose --repository-url https://git.rabiloo.net/api/v4/projects/${CI_PROJECT_ID}/packages/pypi dist/*
+  only:
+    - master
+
+include:
+  - template: Security/License-Scanning.gitlab-ci.yml
+  - template: Security/SAST.gitlab-ci.yml
+  - template: Security/Secret-Detection.gitlab-ci.yml
+  - template: Security/Dependency-Scanning.gitlab-ci.yml
