@@ -171,6 +171,7 @@
 │   ├── 00001A02.jpg
 │   ├── ...
 ```
+Origin label of dataset get from "image sets/train.txt" and "image sets/val.txt"
 ### CMD
 ```shell
 bash cli/aaf.sh
@@ -191,6 +192,7 @@ bash cli/aaf.sh
 ├── README.md
 ├── AFAD-Full.txt
 ```
+Origin label of dataset get from "AFAD-Full.txt"
 ### CMD
 ```shell
 bash cli/afad.sh

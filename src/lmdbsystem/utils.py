@@ -1,8 +1,9 @@
+import csv
 import hashlib
 import json
 import os
 import pickle
-from typing import Dict, Any
+from typing import Dict, Any, List
 
 import numpy as np
 import numpy.typing as npt
@@ -45,6 +46,17 @@ def raw_reader(path: str) -> bytes:
     with open(path, "rb") as f:
         bin_data = f.read()
     return bin_data
+
+
+def csv_line_reader(path: str, delimiter: str, skip_header: bool) -> List[Any]:
+    with open(path, 'r') as f:
+        reader = csv.reader(f, delimiter=delimiter)
+
+        if skip_header:
+            next(reader)
+
+        for row in reader:
+            yield row
 
 
 def json_reader(path: str) -> Dict[str, Any]:

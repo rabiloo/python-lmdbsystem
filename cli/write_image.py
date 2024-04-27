@@ -22,6 +22,11 @@ def get_argument():
                         type=str,
                         help='The suffix of image file')
 
+    parser.add_argument('--lmdb-map-size',
+                        default=32212254720,  # 30GB
+                        type=int,
+                        help='Map size to dump lmdb file, default 30GB')
+
     parser.add_argument('--fn-md5-mode',
                         type=str,
                         help='The mode of handle with filename_to_md5 file. Only support ["r", "w"] mode',
@@ -39,7 +44,7 @@ def get_argument():
 def main():
     args = get_argument()
 
-    lmdb_obj = Lmdb(ImageWriteAdapter(path=args.lmdb_file))
+    lmdb_obj = Lmdb(ImageWriteAdapter(path=args.lmdb_file, map_size=args.lmdb_map_size))
     lmdb_obj.write_dir(
         directory=args.folder,
         suffix=args.suffix,

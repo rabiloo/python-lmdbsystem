@@ -71,6 +71,7 @@ class ImageWriteAdapter(WriteAdapter):
         try:
             txn = self.db.begin(write=True)
             file_paths = sorted(glob(f"{directory}/**/*{suffix}", recursive=True))
+            print(f"Handling with {len(file_paths)} file")
             keys = []
             for idx, file_path in tqdm(enumerate(file_paths)):
                 if fn_md5_mode == "r":

@@ -35,7 +35,7 @@ def get_argument():
 
     parser.add_argument('--delimiter',
                         type=unescaped_str,
-                        choices=['\t', '\n', ' ', ','],
+                        choices=['\t', '\n', ' ', ',', '_'],
                         help='punctuation for split the label line',
                         required=True)
 
@@ -72,6 +72,9 @@ def get_argument():
                         help='List of normalize the value.'
                              'Ex: "Female:0,Male:1,female:0,male:1,111:1,112:0"')
 
+    parser.add_argument('--from-filename',
+                        action=argparse.BooleanOptionalAction,
+                        help='Extract value from filename')
     args = parser.parse_args()
     return args
 
@@ -105,6 +108,8 @@ def main():
     if args.values_map:
         values_map = {value.split(":")[0]: value.split(":")[1] for value in args.values_map.split(",")}
         options["values_map"] = values_map
+    if args.from_filename:
+        options["from_filename"] = args.from_filename
 
     options["delimiter"] = args.delimiter
 
