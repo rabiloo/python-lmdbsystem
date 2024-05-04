@@ -19,21 +19,50 @@ $ pip install lmdbsystem
 ## Usage
 
 ```
-from file_verifier.mime.magic_async_mime import MagicAsyncValidatorMime
-from file_verifier.size.basic_async_size import BaseAsyncValidatorSize
-from file_verifier.type.filetype_type import FiletypeValidatorType
-from file_verifier.convertor.pillow_convertor import PillowConvertor
-from file_verifier.file_validator import FileValidator
+from lmdbsystem.lmdb import Lmdb
+from lmdbsystem.write_adapters.text import TextWriteAdapter
+from lmdbsystem.write_adapters.image import ImageWriteAdapter
+from lmdbsystem.read_adapters.cv2_image import Cv2ImageReadAdapter
+from lmdbsystem.read_adapters.pil_image import PilImageReadAdapter
+from lmdbsystem.read_adapters.bytes_image import BytesImageReadAdapter
+from lmdbsystem.read_adapters.text import TextReadAdapter
 
 
-mime_validator = MagicAsyncValidatorMime(acceptable_mimes=["image/jpeg"])
-size_validator =  BaseAsyncValidatorSize(max_upload_file_size=1024 * 1024)
-type_validator = FiletypeValidatorType(acceptable_types=["image"])
-file_convertor = PillowConvertor(acceptable_mimes=["image/jpeg"])
+# Write lmdb file with some label files
+lmdb_obj = Lmdb(TextWriteAdapter(path=args.lmdb_file))
+lmdb_obj.write_files(
+    file_paths=file_paths,
+    fn_md5_mode=args.fn_md5_mode,
+    fn_md5_path=args.fn_md5_path,
+    options=options,
+)
 
-obj_validator = FileValidator(mime_validator, size_validator, type_validator, file_convertor)
+# Write lmdb file with label directory       
+lmdb_obj = Lmdb(TextWriteAdapter(path=args.lmdb_file))
+lmdb_obj.write_dir(
+    directory=args.folder,
+    suffix=args.suffix,
+    fn_md5_mode=args.fn_md5_mode,
+    fn_md5_path=args.fn_md5_path,
+    options=options,
+)
 
-obj_validator.validate_file("/tmp/hello.txt")
+# Write lmdb file with image directory 
+lmdb_obj = Lmdb(ImageWriteAdapter(path=args.lmdb_file, map_size=args.lmdb_map_size))
+lmdb_obj.write_dir(
+    directory=args.folder,
+    suffix=args.suffix,
+    fn_md5_mode=args.fn_md5_mode,
+    fn_md5_path=args.fn_md5_path,
+)
+
+# Read image
+value = Lmdb(Cv2ImageReadAdapter(path=path)).read(index)
+value = Lmdb(PilImageReadAdapter(path=path)).read(index)
+value = Lmdb(BytesImageReadAdapter(path=path)).read(index)
+
+# Read text
+value = Lmdb(TextReadAdapter(path=path)).read(index)
 ```
 
 ## Changelog
