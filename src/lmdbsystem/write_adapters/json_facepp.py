@@ -23,6 +23,23 @@ class JsonFaceppWriteAdapter(WriteAdapter):
             path, map_size=map_size, subdir=False, readonly=readonly, map_async=True, meminit=meminit, lock=False
         )
 
+    def write(
+        self,
+        keys: List[str],
+        values: List[str],
+        options: Dict[str, Any] = None,
+    ) -> None:
+        """
+        Write the contents of list keys and values to the lmdb.
+        Arguments:
+            keys: The list of keys
+            values: The list of string
+            options: Write options
+        Returns:
+            None
+        """
+        raise NotImplementedError
+
     def write_files(
         self, file_paths: List[str], fn_md5_mode: str, fn_md5_path: str, options: Dict[str, Any] = None
     ) -> None:

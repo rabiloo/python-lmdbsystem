@@ -46,6 +46,23 @@ class LmdbWriter(metaclass=ABCMeta):
     """
 
     @abstractmethod
+    def write(
+        self,
+        keys: List[str],
+        values: List[str],
+        options: Dict[str, Any] = None,
+    ) -> None:
+        """
+        Write the contents of list keys and values to the lmdb.
+        Arguments:
+            keys: The list of keys
+            values: The list of string
+            options: Write options
+        Returns:
+            None
+        """
+
+    @abstractmethod
     def write_files(
         self,
         file_paths: List[str],
@@ -115,6 +132,9 @@ class Lmdb(LmdbOperator):
 
     def read(self, index: int) -> Union[npt.NDArray[np.uint8], Image.Image, str]:
         return self.adapter.read(index)
+
+    def write(self, keys: List[str], values: List[str], options: Dict[str, Any] = None) -> None:
+        self.adapter.write(keys, values, (self.config or {}) | (options or {}))
 
     def write_files(
         self, file_paths: List[str], fn_md5_mode: str, fn_md5_path: str, options: Dict[str, Any] = None

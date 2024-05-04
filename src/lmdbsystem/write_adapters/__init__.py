@@ -8,6 +8,23 @@ class WriteAdapter(metaclass=ABCMeta):
     """
 
     @abstractmethod
+    def write(
+        self,
+        keys: List[str],
+        values: List[str],
+        options: Dict[str, Any] = None,
+    ) -> None:
+        """
+        Write the contents of list keys and values to the lmdb.
+        Arguments:
+            keys: The list of keys
+            values: The list of string
+            options: Write options
+        Returns:
+            None
+        """
+
+    @abstractmethod
     def write_files(
         self,
         file_paths: List[str],
