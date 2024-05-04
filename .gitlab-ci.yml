@@ -37,7 +37,7 @@ unit-test:
   needs: [ ]
   before_script:
     - python -m pip install --upgrade pip
-    - pip install pytest lmdb opencv-python-headless Pillow numpy tqdm
+    - pip install pytest
     - if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - if [ -f requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
   script:

@@ -1,13 +1,21 @@
 import warnings
+
 from typing import Any, Dict, List
 
 import lmdb
+
 from tqdm import tqdm
 
 from ..error import UnableToCloseFile, UnableToWriteFile
-from ..utils import csv_line_reader
-from ..utils import dump_pickle, get_md5_file, str2bytes, json_reader, normalize_path, \
-    removesuffix_path
+from ..utils import (
+    csv_line_reader,
+    dump_pickle,
+    get_md5_file,
+    json_reader,
+    normalize_path,
+    removesuffix_path,
+    str2bytes,
+)
 from ..write_adapters import WriteAdapter
 
 
@@ -25,11 +33,7 @@ class CsvWriteAdapter(WriteAdapter):
         )
 
     def write_files(
-        self,
-        file_paths: List[str],
-        fn_md5_mode: str,
-        fn_md5_path: str,
-        options: Dict[str, Any] = None
+        self, file_paths: List[str], fn_md5_mode: str, fn_md5_path: str, options: Dict[str, Any] = None
     ) -> None:
         """
         Write the contents of list file to the lmdb.
@@ -67,8 +71,7 @@ class CsvWriteAdapter(WriteAdapter):
                     md5_file = dict_filename_md5[filename]
                     key = str2bytes(md5_file)
 
-                    labels = [value.strip() for index, value in enumerate(line_values)
-                              if index in values_index]
+                    labels = [value.strip() for index, value in enumerate(line_values) if index in values_index]
 
                     if values_map:
                         labels = [values_map.get(item, item) for item in labels]

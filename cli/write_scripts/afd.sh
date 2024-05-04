@@ -10,7 +10,7 @@ python cli/write_image.py --lmdb-file "/tmp/facedata/lmdb/afd_image.lmdb" \
     --fn-md5-path "/tmp/facedata/lmdb/afd_fn_md5.json"
 
 # Write Label From Visage Tool
-python cli/write_txt.py --lmdb-file "/tmp/facedata/lmdb/afd_gender_visage.lmdb" \
+python cli/write_text.py --lmdb-file "/tmp/facedata/lmdb/afd_gender_visage.lmdb" \
     --folder "/tmp/facedata/labels/AFD/label_visage" \
     --suffix .txt \
     --delimiter "\n" \
@@ -18,7 +18,7 @@ python cli/write_txt.py --lmdb-file "/tmp/facedata/lmdb/afd_gender_visage.lmdb" 
     --fn-md5-mode r \
     --fn-md5-path "/tmp/facedata/lmdb/afd_fn_md5.json" \
     --values-map "Female:0,Male:1,female:0,male:1,111:1,112:0"
-python cli/write_txt.py --lmdb-file "/tmp/facedata/lmdb/afd_age_visage.lmdb" \
+python cli/write_text.py --lmdb-file "/tmp/facedata/lmdb/afd_age_visage.lmdb" \
     --folder "/tmp/facedata/labels/AFD/label_visage" \
     --suffix .txt \
     --delimiter "\n" \
@@ -42,7 +42,7 @@ python cli/write_json_facepp.py --lmdb-file "/tmp/facedata/lmdb/afd_age_facepp.l
     --keys-extracted "age,value"
 
 # Write Label From Mivolo Tool
-python cli/write_txt.py --lmdb-file "/tmp/facedata/lmdb/afd_age_mivolo.lmdb" \
+python cli/write_text.py --lmdb-file "/tmp/facedata/lmdb/afd_age_mivolo.lmdb" \
     --files "/tmp/facedata/labels/AFD/label_mivolo.txt" \
     --delimiter " " \
     --key-index 0 \
@@ -51,7 +51,7 @@ python cli/write_txt.py --lmdb-file "/tmp/facedata/lmdb/afd_age_mivolo.lmdb" \
     --fn-md5-path "/tmp/facedata/lmdb/afd_fn_md5.json"
 
 # Write Label From MWR Tool
-python cli/write_txt.py --lmdb-file "/tmp/facedata/lmdb/afd_age_mwr.lmdb" \
+python cli/write_text.py --lmdb-file "/tmp/facedata/lmdb/afd_age_mwr.lmdb" \
     --files "/tmp/facedata/labels/AFD/label_mwr.txt" \
     --delimiter " " \
     --key-index 0 \

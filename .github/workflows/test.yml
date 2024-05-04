@@ -20,7 +20,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install black flake8 pytest pytest-asyncio typing_extensions isort lmdb opencv-python-headless Pillow numpy tqdm
+          pip install black flake8 pytest pytest-asyncio typing_extensions isort
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
           if [ -f requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
       - name: Lint with flake8

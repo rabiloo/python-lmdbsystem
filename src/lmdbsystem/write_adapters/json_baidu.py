@@ -2,10 +2,11 @@ from glob import glob
 from typing import Any, Dict, List
 
 import lmdb
+
 from tqdm import tqdm
 
 from ..error import UnableToCloseFile, UnableToWriteFile
-from ..utils import dump_pickle, get_md5_file, str2bytes, json_reader, get_relative_path
+from ..utils import dump_pickle, get_md5_file, get_relative_path, json_reader, str2bytes
 from ..write_adapters import WriteAdapter
 
 
@@ -23,11 +24,7 @@ class JsonBaiduWriteAdapter(WriteAdapter):
         )
 
     def write_files(
-        self,
-        file_paths: List[str],
-        fn_md5_mode: str,
-        fn_md5_path: str,
-        options: Dict[str, Any] = None
+        self, file_paths: List[str], fn_md5_mode: str, fn_md5_path: str, options: Dict[str, Any] = None
     ) -> None:
         """
         Write the contents of list file to the lmdb.
@@ -84,11 +81,12 @@ class JsonBaiduWriteAdapter(WriteAdapter):
                         attribute = None
                         break
                     attribute = attribute[_key]
+
                 if attribute is None:
                     continue
 
-                if values_map:
-                    attribute = values_map.get(attribute, attribute)
+                attribute = values_map.get(attribute, attribute) if values_map else attribute
+
                 value = dump_pickle((sub_key, str2bytes(str(attribute))))
 
                 txn.put(key, value)

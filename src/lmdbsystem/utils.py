@@ -3,7 +3,8 @@ import hashlib
 import json
 import os
 import pickle
-from typing import Dict, Any, List
+
+from typing import Any, Dict, List
 
 import numpy as np
 import numpy.typing as npt
@@ -49,7 +50,7 @@ def raw_reader(path: str) -> bytes:
 
 
 def csv_line_reader(path: str, delimiter: str, skip_header: bool) -> List[Any]:
-    with open(path, 'r') as f:
+    with open(path, "r") as f:
         reader = csv.reader(f, delimiter=delimiter)
 
         if skip_header:
@@ -97,4 +98,4 @@ def normalize_path(file_path: str):
 
 
 def removesuffix_path(file_path: str):
-    return file_path.rsplit('.', 1)[0]
+    return file_path.rsplit(".", 1)[0]

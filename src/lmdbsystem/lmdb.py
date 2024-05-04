@@ -3,7 +3,7 @@ Module flysystem
 """
 
 from abc import ABCMeta, abstractmethod
-from typing import Any, Dict, Union, List
+from typing import Any, Dict, List, Union
 
 import numpy as np
 import numpy.typing as npt
@@ -117,18 +117,9 @@ class Lmdb(LmdbOperator):
         return self.adapter.read(index)
 
     def write_files(
-        self,
-        file_paths: List[str],
-        fn_md5_mode: str,
-        fn_md5_path: str,
-        options: Dict[str, Any] = None
+        self, file_paths: List[str], fn_md5_mode: str, fn_md5_path: str, options: Dict[str, Any] = None
     ) -> None:
-        self.adapter.write_files(
-            file_paths,
-            fn_md5_mode,
-            fn_md5_path,
-            (self.config or {}) | (options or {})
-        )
+        self.adapter.write_files(file_paths, fn_md5_mode, fn_md5_path, (self.config or {}) | (options or {}))
 
     def write_dir(
         self,
@@ -138,13 +129,7 @@ class Lmdb(LmdbOperator):
         fn_md5_path: str,
         options: Dict[str, Any] = None,
     ) -> None:
-        self.adapter.write_dir(
-            directory,
-            suffix,
-            fn_md5_mode,
-            fn_md5_path,
-            (self.config or {}) | (options or {})
-        )
+        self.adapter.write_dir(directory, suffix, fn_md5_mode, fn_md5_path, (self.config or {}) | (options or {}))
 
     def close(self) -> None:
         self.adapter.close()

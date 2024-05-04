@@ -7,45 +7,46 @@ from lmdbsystem.write_adapters.json_facepp import JsonFaceppWriteAdapter
 
 def get_argument():
     parser = argparse.ArgumentParser(
-        description='Convert pdf file to text detection and recognition label.',
+        description="Convert pdf file to text detection and recognition label.",
     )
 
-    parser.add_argument('--lmdb-file',
-                        type=str,
-                        help='The path of lmdb file',
-                        required=True)
+    parser.add_argument("--lmdb-file", type=str, help="The path of lmdb file", required=True)
 
-    parser.add_argument('--folder',
-                        type=str,
-                        help='Directory to containing the label file',
-                        required=True)
+    parser.add_argument("--folder", type=str, help="Directory to containing the label file", required=True)
 
-    parser.add_argument('--suffix',
-                        default='.json',
-                        type=str,
-                        help='The suffix of label file')
+    parser.add_argument("--suffix", default=".json", type=str, help="The suffix of label file")
 
-    parser.add_argument('--fn-md5-mode',
-                        type=str,
-                        help='The mode of handle with filename_to_md5 file. Only support ["r", "w"] mode',
-                        required=True)
+    parser.add_argument(
+        "--fn-md5-mode",
+        type=str,
+        help='The mode of handle with filename_to_md5 file. Only support ["r", "w"] mode',
+        required=True,
+    )
 
-    parser.add_argument('--fn-md5-path',
-                        type=str,
-                        help='The path of filename_to_md5 file',
-                        required=True)
+    parser.add_argument("--fn-md5-path", type=str, help="The path of filename_to_md5 file", required=True)
 
-    parser.add_argument('--keys-extracted',
-                        type=str,
-                        choices=['gender,value', 'age,value', 'headpose', 'emotion',
-                                 'facequality,value', 'ethnicity,value', 'beauty', 'glass,value'],
-                        help='The key with multi level to extract from the label file',
-                        required=True)
+    parser.add_argument(
+        "--keys-extracted",
+        type=str,
+        choices=[
+            "gender,value",
+            "age,value",
+            "headpose",
+            "emotion",
+            "facequality,value",
+            "ethnicity,value",
+            "beauty",
+            "glass,value",
+        ],
+        help="The key with multi level to extract from the label file",
+        required=True,
+    )
 
-    parser.add_argument('--values-map',
-                        type=str,
-                        help='List of normalize the value.'
-                             'Ex: "Female:0,Male:1,female:0,male:1,111:1,112:0"')
+    parser.add_argument(
+        "--values-map",
+        type=str,
+        help="List of normalize the value." 'Ex: "Female:0,Male:1,female:0,male:1,111:1,112:0"',
+    )
 
     args = parser.parse_args()
     return args
@@ -79,5 +80,5 @@ def main():
     )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

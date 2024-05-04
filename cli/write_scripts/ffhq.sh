@@ -18,7 +18,7 @@ python cli/write_image.py --lmdb-file "/tmp/facedata/lmdb/ffhq_image.lmdb" \
 #    --fn-md5-path "/tmp/facedata/lmdb/ffhq_fn_md5.json"
 
 # Write Label From Human
-python cli/write_txt.py --lmdb-file "/tmp/facedata/lmdb/ffhq_age_human.lmdb" \
+python cli/write_text.py --lmdb-file "/tmp/facedata/lmdb/ffhq_age_human.lmdb" \
     --files "/tmp/facedata/labels/FFHQ/label_human.txt" \
     --delimiter " " \
     --key-index 0 \
@@ -27,7 +27,7 @@ python cli/write_txt.py --lmdb-file "/tmp/facedata/lmdb/ffhq_age_human.lmdb" \
     --fn-md5-path "/tmp/facedata/lmdb/ffhq_fn_md5.json"
 
 # Write Label From Visage Tool
-python cli/write_txt.py --lmdb-file "/tmp/facedata/lmdb/ffhq_gender_visage.lmdb" \
+python cli/write_text.py --lmdb-file "/tmp/facedata/lmdb/ffhq_gender_visage.lmdb" \
     --folder "/tmp/facedata/labels/FFHQ/label_visage" \
     --suffix .txt \
     --delimiter "\n" \
@@ -35,7 +35,7 @@ python cli/write_txt.py --lmdb-file "/tmp/facedata/lmdb/ffhq_gender_visage.lmdb"
     --fn-md5-mode r \
     --fn-md5-path "/tmp/facedata/lmdb/ffhq_fn_md5.json" \
     --values-map "Female:0,Male:1,female:0,male:1,111:1,112:0"
-python cli/write_txt.py --lmdb-file "/tmp/facedata/lmdb/ffhq_age_visage.lmdb" \
+python cli/write_text.py --lmdb-file "/tmp/facedata/lmdb/ffhq_age_visage.lmdb" \
     --folder "/tmp/facedata/labels/FFHQ/label_visage" \
     --suffix .txt \
     --delimiter "\n" \
@@ -57,6 +57,22 @@ python cli/write_json_facepp.py --lmdb-file "/tmp/facedata/lmdb/ffhq_age_facepp.
     --fn-md5-mode r \
     --fn-md5-path "/tmp/facedata/lmdb/ffhq_fn_md5.json" \
     --keys-extracted "age,value"
+
+# Write Label From Baidu Tool
+python cli/write_json_baidu.py --lmdb-file "/tmp/facedata/lmdb/ffhq_gender_baidu.lmdb" \
+    --folder "/tmp/facedata/labels/FFHQ/label_baidu" \
+    --suffix .json \
+    --fn-md5-mode r \
+    --fn-md5-path "/tmp/facedata/lmdb/ffhq_fn_md5.json" \
+    --keys-extracted "gender,type" \
+    --key-probability 0.9 \
+    --values-map "Female:0,Male:1,female:0,male:1,111:1,112:0"
+python cli/write_json_baidu.py --lmdb-file "/tmp/facedata/lmdb/ffhq_age_baidu.lmdb" \
+    --folder "/tmp/facedata/labels/FFHQ/label_baidu" \
+    --suffix .json \
+    --fn-md5-mode r \
+    --fn-md5-path "/tmp/facedata/lmdb/ffhq_fn_md5.json" \
+    --keys-extracted "age"
 
 # Write Cleaned Image
 python cli/write_image.py --lmdb-file "/tmp/facedata/SCRFD_500M_KPS_ALIGN_224x224/ffhq_image.lmdb" \

@@ -1,16 +1,26 @@
-import re
 import os
 import re
 import warnings
+
 from glob import glob
 from typing import Any, Dict, List
 
 import lmdb
+
 from tqdm import tqdm
 
 from ..error import UnableToCloseFile, UnableToWriteFile
-from ..utils import dump_pickle, get_md5_file, str2bytes, text_line_reader, json_reader, normalize_path, \
-    get_relative_path, text_reader, removesuffix_path
+from ..utils import (
+    dump_pickle,
+    get_md5_file,
+    get_relative_path,
+    json_reader,
+    normalize_path,
+    removesuffix_path,
+    str2bytes,
+    text_line_reader,
+    text_reader,
+)
 from ..write_adapters import WriteAdapter
 
 
@@ -28,11 +38,7 @@ class TextWriteAdapter(WriteAdapter):
         )
 
     def write_files(
-        self,
-        file_paths: List[str],
-        fn_md5_mode: str,
-        fn_md5_path: str,
-        options: Dict[str, Any] = None
+        self, file_paths: List[str], fn_md5_mode: str, fn_md5_path: str, options: Dict[str, Any] = None
     ) -> None:
         """
         Write the contents of list file to the lmdb.
@@ -76,14 +82,12 @@ class TextWriteAdapter(WriteAdapter):
                     key = str2bytes(md5_file)
 
                     if values_index:
-                        labels = [value.strip() for index, value in enumerate(line_values)
-                                  if index in values_index]
+                        labels = [value.strip() for index, value in enumerate(line_values) if index in values_index]
                     else:
                         result = pattern.search(line_values[key_index])
                         labels = [str(eval(value_type_of_key)(result.group(1)))]
 
-                    if values_map:
-                        labels = [values_map.get(item, item) for item in labels]
+                    labels = [values_map.get(item, item) for item in labels] if values_map else labels
 
                     value = dump_pickle((sub_key, str2bytes(" ".join(labels))))
 
@@ -144,10 +148,12 @@ class TextWriteAdapter(WriteAdapter):
                     line_values = os.path.basename(file_path).split(delimiter)
                 else:
                     line_values = text_reader(file_path).split(delimiter)
-                labels = [value.strip() for index, value in enumerate(line_values)
-                          if index in values_index]
+
+                labels = [value.strip() for index, value in enumerate(line_values) if index in values_index]
+
                 if values_map:
                     labels = [values_map.get(item, item) for item in labels]
+
                 value = dump_pickle((sub_key, str2bytes(" ".join(labels))))
 
                 txn.put(key, value)
