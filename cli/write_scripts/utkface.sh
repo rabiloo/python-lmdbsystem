@@ -17,6 +17,7 @@ python cli/write_text.py --lmdb-file "/tmp/facedata/lmdb/utkface_gender_origin.l
     --values-index 1 \
     --fn-md5-mode r \
     --fn-md5-path "/tmp/facedata/lmdb/utkface_fn_md5.json" \
+    --values-map "0:1,1:0" \
     --from-filename
 python cli/write_text.py --lmdb-file "/tmp/facedata/lmdb/utkface_age_origin.lmdb" \
     --folder "/tmp/facedata/original/UTKFace" \

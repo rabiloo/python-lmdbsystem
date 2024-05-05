@@ -28,5 +28,5 @@ lmdb_obj.write_files(
     ),
 )
 def test_read_text(path: str, index: int, expected: str, error: Exception):
-    value = Lmdb(TextReadAdapter(path=path)).read(index)
+    value = Lmdb(TextReadAdapter(path=path)).read_index(index)
     assert value == expected

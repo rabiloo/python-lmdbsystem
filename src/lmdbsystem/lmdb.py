@@ -21,13 +21,23 @@ class LmdbReader(metaclass=ABCMeta):
     """
 
     @abstractmethod
-    def read(self, path: str) -> Union[npt.NDArray[np.uint8], Image.Image, str]:
+    def read_index(self, index: int) -> Union[npt.NDArray[np.uint8], Image.Image, str]:
         """
-        Get the contents of a file.
+        Read the contents of the lmdb file by index.
         Arguments:
-            path: The file path
+            index: The index of data
         Returns:
-            The contents of file as string
+            None
+        """
+
+    @abstractmethod
+    def read_key(self, key: bytes) -> Union[npt.NDArray[np.uint8], Image.Image, str]:
+        """
+        Read the contents of the lmdb file by key.
+        Arguments:
+            key: The key of data
+        Returns:
+            None
         """
 
     @abstractmethod
@@ -130,8 +140,11 @@ class Lmdb(LmdbOperator):
         self.adapter = adapter
         self.config = config
 
-    def read(self, index: int) -> Union[npt.NDArray[np.uint8], Image.Image, str]:
-        return self.adapter.read(index)
+    def read_index(self, index: int) -> Union[npt.NDArray[np.uint8], Image.Image, str]:
+        return self.adapter.read_index(index)
+
+    def read_key(self, key: bytes) -> Union[npt.NDArray[np.uint8], Image.Image, str]:
+        return self.adapter.read_key(key)
 
     def write(self, keys: List[str], values: List[str], options: Dict[str, Any] = None) -> None:
         self.adapter.write(keys, values, (self.config or {}) | (options or {}))

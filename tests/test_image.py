@@ -28,10 +28,10 @@ lmdb_obj.write_dir(
     ),
 )
 def test_read_image(path: str, index: int, expected: str, error: Exception):
-    value = Lmdb(Cv2ImageReadAdapter(path=path)).read(index)
+    value = Lmdb(Cv2ImageReadAdapter(path=path)).read_index(index)
     img_expected = cv2.imread(expected)
     assert np.allclose(img_expected, value)
 
-    value = Lmdb(PilImageReadAdapter(path=path)).read(index)
+    value = Lmdb(PilImageReadAdapter(path=path)).read_index(index)
     img_expected = Image.open(expected)
     assert ImageChops.difference(img_expected, value).getbbox() is None

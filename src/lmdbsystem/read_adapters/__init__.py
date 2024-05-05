@@ -7,11 +7,21 @@ class ReadAdapter(metaclass=ABCMeta):
     """
 
     @abstractmethod
-    def read(self, index: int):
+    def read_index(self, index: int):
         """
-        Read the contents of the lmdb file.
+        Read the contents of the lmdb file by index.
         Arguments:
             index: The index of data
+        Returns:
+            None
+        """
+
+    @abstractmethod
+    def read_key(self, key: bytes):
+        """
+        Read the contents of the lmdb file by key.
+        Arguments:
+            key: The key of data
         Returns:
             None
         """

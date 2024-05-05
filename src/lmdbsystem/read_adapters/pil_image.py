@@ -25,9 +25,27 @@ class PilImageReadAdapter(ReadAdapter):
         self.length = pickle.loads(self.txn.get(b"__len__"))
         self.keys = pickle.loads(self.txn.get(b"__keys__"))
 
-    def read(self, index) -> Image.Image:
+    def read_index(self, index: int) -> Image.Image:
         try:
             key = self.keys[index]
+            value = self.txn.get(key)
+            try:
+                contents = pickle.loads(value)
+                _, image_byte = contents
+            except pickle.UnpicklingError:
+                image_byte = value
+
+            with io.BytesIO() as buf:
+                buf.write(image_byte)
+                buf.seek(0)
+                img = Image.open(buf).convert("RGB")
+        except Exception as ex:
+            raise UnableToReadFile.with_location(self.path, str(ex))
+
+        return img
+
+    def read_key(self, key: bytes) -> Image.Image:
+        try:
             value = self.txn.get(key)
             try:
                 contents = pickle.loads(value)

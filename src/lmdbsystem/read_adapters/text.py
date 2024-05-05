@@ -23,9 +23,24 @@ class TextReadAdapter(ReadAdapter):
         self.length = pickle.loads(self.txn.get(b"__len__"))
         self.keys = pickle.loads(self.txn.get(b"__keys__"))
 
-    def read(self, index) -> str:
+    def read_index(self, index: int) -> str:
         try:
             key = self.keys[index]
+            value = self.txn.get(key)
+            try:
+                contents = pickle.loads(value)
+                _, label = contents
+            except pickle.UnpicklingError:
+                label = value
+
+            label = bytes2str(label)
+        except Exception as ex:
+            raise UnableToReadFile.with_location(self.path, str(ex))
+
+        return label
+
+    def read_key(self, key: bytes) -> str:
+        try:
             value = self.txn.get(key)
             try:
                 contents = pickle.loads(value)

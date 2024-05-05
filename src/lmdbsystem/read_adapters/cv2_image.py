@@ -25,9 +25,25 @@ class Cv2ImageReadAdapter(ReadAdapter):
         self.length = pickle.loads(self.txn.get(b"__len__"))
         self.keys = pickle.loads(self.txn.get(b"__keys__"))
 
-    def read(self, index: int) -> npt.NDArray[np.uint8]:
+    def read_index(self, index: int) -> npt.NDArray[np.uint8]:
         try:
             key = self.keys[index]
+            value = self.txn.get(key)
+            try:
+                contents = pickle.loads(value)
+                _, image_byte = contents
+            except pickle.UnpicklingError:
+                image_byte = value
+
+            img_np = np.frombuffer(image_byte, dtype=np.uint8)
+            img = cv2.imdecode(img_np, flags=1)
+        except Exception as ex:
+            raise UnableToReadFile.with_location(self.path, str(ex))
+
+        return img
+
+    def read_key(self, key: bytes) -> npt.NDArray[np.uint8]:
+        try:
             value = self.txn.get(key)
             try:
                 contents = pickle.loads(value)
