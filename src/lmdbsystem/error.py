@@ -63,3 +63,14 @@ class UnableToWriteFile(UnableToOperateToFile):
         this._location = location
         this._reason = reason
         return this
+
+
+@final
+class UnableToUpdateFile(UnableToOperateToFile):
+    @classmethod
+    def with_location(cls, location: str, reason: str = "") -> Self:
+        msg = f"Unable to update file from location: {location}. {reason}".rstrip()
+        this = cls(msg)
+        this._location = location
+        this._reason = reason
+        return this

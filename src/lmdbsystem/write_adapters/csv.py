@@ -32,6 +32,23 @@ class CsvWriteAdapter(WriteAdapter):
             path, map_size=map_size, subdir=False, readonly=readonly, map_async=True, meminit=meminit, lock=False
         )
 
+    def update(
+        self,
+        keys: List[str],
+        values: List[str],
+        options: Dict[str, Any] = None,
+    ) -> None:
+        """
+        Update the contents of list keys and values to the lmdb.
+        Arguments:
+            keys: The list of keys
+            values: The list of string
+            options: Update options
+        Returns:
+            None
+        """
+        raise NotImplementedError
+
     def write(
         self,
         keys: List[str],

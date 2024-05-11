@@ -31,8 +31,10 @@ class TextReadAdapter(ReadAdapter):
                 contents = pickle.loads(value)
                 _, label = contents
             except pickle.UnpicklingError:
-                label = value
-
+                if isinstance(value, bytes):
+                    label = value
+                else:
+                    label = bytes(value)
             label = bytes2str(label)
         except Exception as ex:
             raise UnableToReadFile.with_location(self.path, str(ex))

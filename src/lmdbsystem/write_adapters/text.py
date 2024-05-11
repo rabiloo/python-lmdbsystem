@@ -9,7 +9,7 @@ import lmdb
 
 from tqdm import tqdm
 
-from ..error import UnableToCloseFile, UnableToWriteFile
+from ..error import UnableToCloseFile, UnableToUpdateFile, UnableToWriteFile
 from ..utils import (
     dump_pickle,
     get_md5_file,
@@ -36,6 +36,34 @@ class TextWriteAdapter(WriteAdapter):
         self.db = lmdb.open(
             path, map_size=map_size, subdir=False, readonly=readonly, map_async=True, meminit=meminit, lock=False
         )
+
+    def update(
+        self,
+        keys: List[str],
+        values: List[str],
+        options: Dict[str, Any] = None,
+    ) -> None:
+        """
+        Update the contents of list keys and values to the lmdb.
+        Arguments:
+            keys: The list of keys
+            values: The list of string
+            options: Update options
+        Returns:
+            None
+        """
+        write_frequency = options.get("write_frequency", 500)
+        try:
+            txn = self.db.begin(write=True)
+            for idx, (key, value) in enumerate(tqdm(zip(keys, values))):
+                value = str2bytes(str(value))
+                txn.put(key, value)
+                if write_frequency > 0 and idx % write_frequency == 0:
+                    txn.commit()
+                    txn = self.db.begin(write=True)
+            txn.commit()
+        except Exception as ex:
+            raise UnableToUpdateFile.with_location(self.path, str(ex))
 
     def write(
         self,

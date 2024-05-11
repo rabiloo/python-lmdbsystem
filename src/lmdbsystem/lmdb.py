@@ -56,6 +56,23 @@ class LmdbWriter(metaclass=ABCMeta):
     """
 
     @abstractmethod
+    def update(
+        self,
+        keys: List[str],
+        values: List[str],
+        options: Dict[str, Any] = None,
+    ) -> None:
+        """
+        Update the contents of list keys and values to the lmdb.
+        Arguments:
+            keys: The list of keys
+            values: The list of string
+            options: Update options
+        Returns:
+            None
+        """
+
+    @abstractmethod
     def write(
         self,
         keys: List[str],
@@ -145,6 +162,9 @@ class Lmdb(LmdbOperator):
 
     def read_key(self, key: bytes) -> Union[npt.NDArray[np.uint8], Image.Image, str]:
         return self.adapter.read_key(key)
+
+    def update(self, keys: List[str], values: List[str], options: Dict[str, Any] = None) -> None:
+        self.adapter.update(keys, values, (self.config or {}) | (options or {}))
 
     def write(self, keys: List[str], values: List[str], options: Dict[str, Any] = None) -> None:
         self.adapter.write(keys, values, (self.config or {}) | (options or {}))
