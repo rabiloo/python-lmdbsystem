@@ -1,4 +1,5 @@
 import os
+import pickle
 import re
 import warnings
 
@@ -53,15 +54,27 @@ class TextWriteAdapter(WriteAdapter):
             None
         """
         write_frequency = options.get("write_frequency", 500)
+
+        with self.db.begin(write=False, buffers=True) as txn:
+            base_length = pickle.loads(txn.get(b"__len__"))
+            base_keys = pickle.loads(txn.get(b"__keys__"))
+
         try:
             txn = self.db.begin(write=True)
             for idx, (key, value) in enumerate(tqdm(zip(keys, values))):
+                if key not in base_keys:
+                    base_keys.append(key)
                 value = str2bytes(str(value))
                 txn.put(key, value)
                 if write_frequency > 0 and idx % write_frequency == 0:
                     txn.commit()
                     txn = self.db.begin(write=True)
+
             txn.commit()
+            if len(base_keys) > base_length:
+                with self.db.begin(write=True) as txn:
+                    txn.put(b"__keys__", dump_pickle(base_keys))
+                    txn.put(b"__len__", dump_pickle(len(base_keys)))
         except Exception as ex:
             raise UnableToUpdateFile.with_location(self.path, str(ex))
 
