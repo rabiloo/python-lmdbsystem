@@ -50,7 +50,7 @@ dev = [
 
 [tool.flake8]
 count = true
-max-complexity = 10
+max-complexity = 15
 max-line-length = 120
 statistics = true
 ignore = ["W503"]

@@ -1,10 +1,18 @@
+"""
+label of data in filename of image
+ex: 12_0_0_20170117190914091
+"""
+
 import argparse
 import os
 
-from dataset_loaders import FaceppLoader
-
+from cli.dataset_loaders import LabelInFilenameLoader
 from lmdbsystem.lmdb import Lmdb
 from lmdbsystem.write_adapters.text import TextWriteAdapter
+
+
+def unescaped_str(arg_str):
+    return arg_str.encode().decode("unicode_escape")
 
 
 def get_argument():
@@ -14,28 +22,26 @@ def get_argument():
 
     parser.add_argument("--lmdb-file", type=str, help="The path of lmdb file", required=True)
 
-    parser.add_argument("--folder", type=str, help="Directory to containing the label file", required=True)
+    parser.add_argument("--folder", type=str, help="Directory to containing the label file")
 
-    parser.add_argument("--suffix", default=".json", type=str, help="The suffix of label file")
-
-    parser.add_argument("--fn-md5-path", type=str, help="The path of filename_to_md5 file", required=True)
+    parser.add_argument("--suffix", default=".txt", type=str, help="The suffix of label file")
 
     parser.add_argument(
-        "--keys-extracted",
-        type=str,
-        choices=[
-            "gender,value",
-            "age,value",
-            "headpose",
-            "emotion",
-            "facequality,value",
-            "ethnicity,value",
-            "beauty",
-            "glass,value",
-        ],
-        help="The key with multi level to extract from the label file",
+        "--delimiter",
+        type=unescaped_str,
+        choices=["\t", "\n", " ", ",", "_", "A"],
+        help="punctuation for split the label line",
         required=True,
     )
+
+    parser.add_argument(
+        "--values-index",
+        type=str,
+        help="The list of index to extract values from the label line, Except value: 0,1,2,3",
+        required=True,
+    )
+
+    parser.add_argument("--fn-md5-path", type=str, help="The path of filename_to_md5 file", required=True)
 
     parser.add_argument(
         "--values-map",
@@ -49,27 +55,26 @@ def get_argument():
 
 def main():
     args = get_argument()
-
     if args.folder and not os.path.isdir(args.folder):
         raise ValueError("Folder not exists")
 
-    if args.folder and not args.suffix:
-        raise ValueError("Do not empty --suffix argument when handle with some folder")
+    if args.folder and (not args.suffix or not args.values_index):
+        raise ValueError("Do not empty --suffix or --values-index argument when handle with some folder")
 
-    keys_extracted = args.keys_extracted.split(",") if args.keys_extracted else []
-
+    values_index = [int(value) for value in args.values_index.split(",")]
     values_map = (
         {value.split(":")[0]: value.split(":")[1] for value in args.values_map.split(",")} if args.values_map else None
     )
 
     lmdb_obj = Lmdb(TextWriteAdapter(path=args.lmdb_file))
     lmdb_obj.write_loader(
-        FaceppLoader(
+        LabelInFilenameLoader(
             directory=args.folder,
             suffix=args.suffix,
             fn_md5_path=args.fn_md5_path,
-            keys_extracted=keys_extracted,
             values_map=values_map,
+            delimiter=args.delimiter,
+            values_index=values_index,
         ),
     )
 

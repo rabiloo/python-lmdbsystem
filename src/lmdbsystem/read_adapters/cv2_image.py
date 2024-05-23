@@ -26,21 +26,11 @@ class Cv2ImageReadAdapter(ReadAdapter):
         self.keys = pickle.loads(self.txn.get(b"__keys__"))
 
     def read_index(self, index: int) -> npt.NDArray[np.uint8]:
-        try:
-            key = self.keys[index]
-            value = self.txn.get(key)
-            try:
-                contents = pickle.loads(value)
-                _, image_byte = contents
-            except pickle.UnpicklingError:
-                image_byte = value
+        if index < 0 or index >= self.length:
+            raise UnableToReadFile.with_location(self.path, f"Invalid index: {index}")
 
-            img_np = np.frombuffer(image_byte, dtype=np.uint8)
-            img = cv2.imdecode(img_np, flags=1)
-        except Exception as ex:
-            raise UnableToReadFile.with_location(self.path, str(ex))
-
-        return img
+        key = self.keys[index]
+        return self.read_key(key)
 
     def read_key(self, key: bytes) -> npt.NDArray[np.uint8]:
         try:
@@ -49,7 +39,10 @@ class Cv2ImageReadAdapter(ReadAdapter):
                 contents = pickle.loads(value)
                 _, image_byte = contents
             except pickle.UnpicklingError:
-                image_byte = value
+                if isinstance(value, bytes):
+                    image_byte = value
+                else:
+                    image_byte = bytes(value)
 
             img_np = np.frombuffer(image_byte, dtype=np.uint8)
             img = cv2.imdecode(img_np, flags=1)

@@ -10,6 +10,7 @@ import numpy.typing as npt
 
 from PIL import Image
 
+from .dataloader import DataLoader
 from .read_adapters import ReadAdapter
 from .write_adapters import WriteAdapter
 
@@ -90,40 +91,15 @@ class LmdbWriter(metaclass=ABCMeta):
         """
 
     @abstractmethod
-    def write_files(
+    def write_loader(
         self,
-        file_paths: List[str],
-        fn_md5_mode: str,
-        fn_md5_path: str,
+        dataloader: DataLoader,
         options: Dict[str, Any] = None,
     ) -> None:
         """
-        Write the contents of list file to the lmdb.
+        Write the contents by data loader.
         Arguments:
-            file_paths: The list of file path
-            fn_md5_mode: The mode of handle with filename_to_md5 file. Only support ["r", "w"] mode
-            fn_md5_path: The path of filename_to_md5 file
-            options: Write options
-        Returns:
-            None
-        """
-
-    @abstractmethod
-    def write_dir(
-        self,
-        directory: str,
-        suffix: str,
-        fn_md5_mode: str,
-        fn_md5_path: str,
-        options: Dict[str, Any] = None,
-    ) -> None:
-        """
-        Write all contents of a directory to the lmdb.
-        Arguments:
-            directory: The directory path
-            suffix: The suffix of file
-            fn_md5_mode: The mode of handle with filename_to_md5 file. Only support ["r", "w"] mode
-            fn_md5_path: The path of filename_to_md5 file
+            dataloader: The data loader to get item
             options: Write options
         Returns:
             None
@@ -169,20 +145,8 @@ class Lmdb(LmdbOperator):
     def write(self, keys: List[str], values: List[str], options: Dict[str, Any] = None) -> None:
         self.adapter.write(keys, values, (self.config or {}) | (options or {}))
 
-    def write_files(
-        self, file_paths: List[str], fn_md5_mode: str, fn_md5_path: str, options: Dict[str, Any] = None
-    ) -> None:
-        self.adapter.write_files(file_paths, fn_md5_mode, fn_md5_path, (self.config or {}) | (options or {}))
-
-    def write_dir(
-        self,
-        directory: str,
-        suffix: str,
-        fn_md5_mode: str,
-        fn_md5_path: str,
-        options: Dict[str, Any] = None,
-    ) -> None:
-        self.adapter.write_dir(directory, suffix, fn_md5_mode, fn_md5_path, (self.config or {}) | (options or {}))
+    def write_loader(self, dataloader: DataLoader, options: Dict[str, Any] = None) -> None:
+        self.adapter.write_loader(dataloader, (self.config or {}) | (options or {}))
 
     def close(self) -> None:
         self.adapter.close()

@@ -23,19 +23,11 @@ class BytesImageReadAdapter(ReadAdapter):
         self.keys = pickle.loads(self.txn.get(b"__keys__"))
 
     def read_index(self, index: int) -> bytes:
-        try:
-            key = self.keys[index]
-            value = self.txn.get(key)
-            try:
-                contents = pickle.loads(value)
-                _, image_byte = contents
-            except pickle.UnpicklingError:
-                image_byte = value
+        if index < 0 or index >= self.length:
+            raise UnableToReadFile.with_location(self.path, f"Invalid index: {index}")
 
-        except Exception as ex:
-            raise UnableToReadFile.with_location(self.path, str(ex))
-
-        return image_byte
+        key = self.keys[index]
+        return self.read_key(key)
 
     def read_key(self, key: bytes) -> bytes:
         try:
@@ -44,7 +36,10 @@ class BytesImageReadAdapter(ReadAdapter):
                 contents = pickle.loads(value)
                 _, image_byte = contents
             except pickle.UnpicklingError:
-                image_byte = value
+                if isinstance(value, bytes):
+                    image_byte = value
+                else:
+                    image_byte = bytes(value)
 
         except Exception as ex:
             raise UnableToReadFile.with_location(self.path, str(ex))

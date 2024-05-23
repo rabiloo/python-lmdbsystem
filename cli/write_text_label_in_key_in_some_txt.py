@@ -1,10 +1,12 @@
 import argparse
-import os
 
-from dataset_loaders import BaiduLoader
-
+from cli.dataset_loaders import LabelInKeyInSomeTxtLoader
 from lmdbsystem.lmdb import Lmdb
 from lmdbsystem.write_adapters.text import TextWriteAdapter
+
+
+def unescaped_str(arg_str):
+    return arg_str.encode().decode("unicode_escape")
 
 
 def get_argument():
@@ -14,31 +16,38 @@ def get_argument():
 
     parser.add_argument("--lmdb-file", type=str, help="The path of lmdb file", required=True)
 
-    parser.add_argument("--folder", type=str, help="Directory to containing the label file", required=True)
-
-    parser.add_argument("--suffix", default=".json", type=str, help="The suffix of label file")
-
     parser.add_argument(
-        "--fn-md5-mode",
+        "--files",
         type=str,
-        help='The mode of handle with filename_to_md5 file. Only support ["r", "w"] mode',
+        help="The list of file path, Except value: /tmp/test1.txt,/tmp/test2.txt,/tmp/test3.txt",
         required=True,
     )
+
+    parser.add_argument(
+        "--delimiter",
+        type=unescaped_str,
+        choices=["\t", "\n", " ", ",", "_"],
+        help="punctuation for split the label line",
+        required=True,
+    )
+
+    parser.add_argument("--key-index", type=int, help="The index to extract key from the label line", required=True)
 
     parser.add_argument("--fn-md5-path", type=str, help="The path of filename_to_md5 file", required=True)
 
     parser.add_argument(
-        "--keys-extracted",
+        "--pattern-value-in-key",
         type=str,
-        choices=["angle", "age", "expression,type", "gender,type", "glasses,type", "emotion,type", "mask,type"],
-        help="The key with multi level to extract from the label file",
+        help="The pattern of value in key",
         required=True,
     )
 
     parser.add_argument(
-        "--key-probability",
-        type=float,
-        help="The minimum probability of value for attribute." 'Only using parameter when keys-extracted has "type"',
+        "--type-value-in-key",
+        type=str,
+        choices=["int", "str", "float"],
+        help="The type of value in key",
+        required=True,
     )
 
     parser.add_argument(
@@ -54,27 +63,20 @@ def get_argument():
 def main():
     args = get_argument()
 
-    if args.folder and not os.path.isdir(args.folder):
-        raise ValueError("Folder not exists")
-
-    if args.folder and not args.suffix:
-        raise ValueError("Do not empty --suffix argument when handle with some folder")
-
-    keys_extracted = args.keys_extracted.split(",") if args.keys_extracted else []
-
     values_map = (
         {value.split(":")[0]: value.split(":")[1] for value in args.values_map.split(",")} if args.values_map else None
     )
 
     lmdb_obj = Lmdb(TextWriteAdapter(path=args.lmdb_file))
     lmdb_obj.write_loader(
-        BaiduLoader(
-            directory=args.folder,
-            suffix=args.suffix,
+        LabelInKeyInSomeTxtLoader(
+            file_paths=args.files.split(","),
             fn_md5_path=args.fn_md5_path,
-            keys_extracted=keys_extracted,
-            key_probability=args.key_probability,
+            key_index=args.key_index,
+            pattern_value_in_key=args.pattern_value_in_key,
+            type_value_in_key=args.type_value_in_key,
             values_map=values_map,
+            delimiter=args.delimiter,
         ),
     )
 

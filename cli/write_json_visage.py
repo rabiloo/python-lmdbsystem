@@ -1,7 +1,7 @@
 import argparse
 import os
 
-from dataset_loaders import FaceppLoader
+from dataset_loaders import VisageLoader
 
 from lmdbsystem.lmdb import Lmdb
 from lmdbsystem.write_adapters.text import TextWriteAdapter
@@ -24,16 +24,10 @@ def get_argument():
         "--keys-extracted",
         type=str,
         choices=[
-            "gender,value",
-            "age,value",
-            "headpose",
-            "emotion",
-            "facequality,value",
-            "ethnicity,value",
-            "beauty",
-            "glass,value",
+            "gender",
+            "age",
         ],
-        help="The key with multi level to extract from the label file",
+        help="The key to extract from the label file",
         required=True,
     )
 
@@ -64,7 +58,7 @@ def main():
 
     lmdb_obj = Lmdb(TextWriteAdapter(path=args.lmdb_file))
     lmdb_obj.write_loader(
-        FaceppLoader(
+        VisageLoader(
             directory=args.folder,
             suffix=args.suffix,
             fn_md5_path=args.fn_md5_path,

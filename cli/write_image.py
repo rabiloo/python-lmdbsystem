@@ -1,5 +1,7 @@
 import argparse
 
+from dataset_loaders import ImageLoader
+
 from lmdbsystem.lmdb import Lmdb
 from lmdbsystem.write_adapters.image import ImageWriteAdapter
 
@@ -34,11 +36,13 @@ def main():
     args = get_argument()
 
     lmdb_obj = Lmdb(ImageWriteAdapter(path=args.lmdb_file, map_size=args.lmdb_map_size))
-    lmdb_obj.write_dir(
-        directory=args.folder,
-        suffix=args.suffix,
-        fn_md5_mode=args.fn_md5_mode,
-        fn_md5_path=args.fn_md5_path,
+    lmdb_obj.write_loader(
+        ImageLoader(
+            directory=args.folder,
+            suffix=args.suffix,
+            fn_md5_mode=args.fn_md5_mode,
+            fn_md5_path=args.fn_md5_path,
+        ),
     )
 
 
