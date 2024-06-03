@@ -73,7 +73,6 @@ latest-image:
     - TWINE_PASSWORD=${CI_JOB_TOKEN} TWINE_USERNAME=gitlab-ci-token twine upload --verbose --repository-url https://git.rabiloo.net/api/v4/projects/${CI_PROJECT_ID}/packages/pypi dist/*
   only:
     - master
-    - main
 
 include:
   - template: Security/License-Scanning.gitlab-ci.yml
