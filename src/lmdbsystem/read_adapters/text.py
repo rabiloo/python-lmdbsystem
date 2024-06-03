@@ -2,9 +2,10 @@ import pickle
 
 import lmdb
 
+from data_helper.datatypes import bytes2str
+
 from ..error import UnableToCloseFile, UnableToReadFile
 from ..read_adapters import ReadAdapter
-from ..utils import bytes2str
 
 
 class TextReadAdapter(ReadAdapter):

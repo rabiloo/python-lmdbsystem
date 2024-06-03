@@ -25,9 +25,7 @@ classifiers = [
 ]
 dependencies = [
     "lmdb",
-    "Pillow",
-    "opencv-python-headless",
-    "numpy",
+    "datas-helper[image]",
     "tqdm"
 ]
 

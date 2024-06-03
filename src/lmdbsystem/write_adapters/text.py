@@ -4,11 +4,12 @@ from typing import Any, Dict, List, Union
 
 import lmdb
 
+from data_helper.datatypes import str2bytes
+from data_helper.file import dump_pickle
 from tqdm import tqdm
 
 from ..dataloader import DataLoader
 from ..error import UnableToCloseFile, UnableToUpdateFile, UnableToWriteFile
-from ..utils import dump_pickle, str2bytes
 from ..write_adapters import WriteAdapter
 
 
